@@ -167,7 +167,7 @@ When enabled, your post will be split into pages just before each HTML heading (
 
 Note that this feature works not just with literal HTML heading tags, but also with both of the types of heading syntax that Markdown supports.
 
-You can choose which level of headings to auto-pagebreak on via the `multipage_auto_pagebreak_heading_level` setting.
+You can choose which level of headings to auto-pagebreak on via the `multipage_auto_pagebreak_heading_level` setting. The value should be a number, usually between 1 and 6.
 
 By default, the titles of auto-pagebroken pages will be set to the heading that the page was broken on. This will often be what you want. If you'd like to disable this feature, set `multipage_use_headings_for_page_titles` to `false`.
 
