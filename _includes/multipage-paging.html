@@ -1,0 +1,57 @@
+<div class="multipage paging">
+	<ul>
+
+		<li class="paging-first">
+			{% unless page.multipage.page_number == page.multipage.first_number %}
+			<a href="{{ page.multipage.first_path }}" title="Go to first page">&#x21e4;</a>
+			{% else %}
+			&#x21e4;
+			{% endunless %}
+		</li>
+
+		<li class="paging-previous">
+			{% unless page.multipage.previous_number == -1 %}
+			<a href="{{ page.multipage.previous_path }}" title="Go to previous page">&#x21e0;</a>
+			{% else %}
+			&#x21e0;
+			{% endunless %}
+		</li>
+
+{% for page_number in page.multipage.page_numbers %}
+		<li class="paging-number">
+			{% unless page.multipage.page_index == forloop.index0 %}
+			<a href="{{ page.multipage.page_paths[forloop.index0] }}" title="Go to {{ page.multipage.page_titles[forloop.index0] }}">{{ page_number }}</a>
+			{% else %}
+			{{ page_number }}
+			{% endunless %}
+		</li>
+{% endfor %}
+
+		<li class="paging-next">
+			{% unless page.multipage.next_number == -1 %}
+			<a href="{{ page.multipage.next_path }}" title="Go to next page">&#x21e2;</a>
+			{% else %}
+			&#x21e2;
+			{% endunless %}
+		</li>
+
+		<li class="paging-last">
+			{% unless page.multipage.page_number == page.multipage.last_number %}
+			<a href="{{ page.multipage.last_path }}" title="Go to last page">&#x21e5;</a>
+			{% else %}
+			&#x21e5;
+			{% endunless %}
+		</li>
+
+		{% if page.multipage.collation_enabled %}
+		<li class="paging-collated">
+			{% unless page.multipage.is_collated_page %}
+			<a href="{{ page.multipage.collated_path }}" title="View all pages at once">All</a>
+			{% else %}
+			All
+			{% endunless %}
+		</li>
+		{% endif %}
+
+	</ul>
+</div>

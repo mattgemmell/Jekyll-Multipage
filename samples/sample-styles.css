@@ -1,0 +1,36 @@
+
+.multipage.paging {
+	margin: 7rem auto;
+}
+
+.multipage.paging ul {
+	display: inline;
+	background-color: #f0f0f0;
+	padding: 1rem;
+	border: 1px solid #999;
+}
+
+.multipage.paging ul li {
+	display: inline-block;
+	list-style-type: none;
+	margin: 0.5rem 1rem;
+	padding: 0;
+}
+
+.multipage.paging ul li.paging-collated {
+	margin-left: 3rem;
+}
+
+.multipage.paging ul li a {
+	text-decoration: none;
+}
+
+.multipage.paging ul li a:hover {
+	background-color: white;
+}
+
+.multipage.pagebreak hr {
+	border: 2px solid #999;
+	height: 1px;
+	margin: 10rem auto;
+}
