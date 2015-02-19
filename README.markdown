@@ -78,9 +78,9 @@ You can customise several aspects of the collated page:
 
 - You can disable the collated page entirely by setting `multipage_collation_enabled` to `false`.
 
-- You can choose the slug (partial path, below your post's own path) for the collated by via the `multipage_collated_page_slug` setting. The default is `all`.
+- You can choose the slug (partial path, below your post's own path) for the collated page via the `multipage_collated_page_slug` setting. The default is `all`.
 
-- You can move the collated page to the post's root page by setting `multipage_collate_on_root_page` to `true`. See also the section of this document on [page numbering](#page-numbers).
+- You can move the collated page to the post's root URL by setting `multipage_collate_on_root_page` to `true`. See also the section of this document on [page numbering](#page-numbers).
 
 - You can choose the title of the collated page via the `multipage_collated_page_title_format` setting. Within the value for that setting, you can use the `:post_title` token, which will be replaced with the title of the original post.
 
@@ -174,7 +174,7 @@ By default, the titles of auto-pagebroken pages will be set to the heading that 
 
 ## Anchor links
 
-In HTML (and Markdown), it's possible to link to **anchors* on the same page, allowing in-page navigation. This is commonly used for references, tables of contents, and so on.
+In HTML (and Markdown), it's possible to link to **anchors** on the same page, allowing in-page navigation. This is commonly used for references, tables of contents, and so on.
 
 Logically, anchor links which worked on a single-page post will no longer work when that post is split across multiple pages. Thus, this plugin can automatically **rewrite anchor links** for you. This feature is enabled by default.
 
@@ -192,11 +192,11 @@ Put the tag immediately before the `#` symbol in an anchor link, for example:
 
 The resulting link will be rewritten on non-collated pages, to go to the specified destination page. Note that there are two types of value you can specify in the tag:
 
-- A bare number, for example **3**, is a **zero-based page index**, i.e. the first page is **0**, and so on. The collated page is not included, regardless of whether it's at the post's root URL or not. This is a progammer-centric value, which you may find easier to work with if you're so inclined.
+- A bare number, for example **3**, is a **zero-based page index**, i.e. the first page is **0**, and so on. The collated page is not included, regardless of whether it's at the post's root URL or not. This is a programmer-centric value, which you may find easier to work with if you're so inclined.
 
-- A number prefixed with `n`, for example **`n3`**, is a **page number** according to your [page-numbering](#page-numbers) settings. This is human-centric value, and corresponds to the displayed page numbers.
+- A number prefixed with `n`, for example **n3**, is a **page number** according to your [page-numbering](#page-numbers) settings. This is a human-centric value, and corresponds to the displayed page numbers.
 
-For example, if your page-numbering is set to start at **1**, then using the value **n1** would yield the **first** page, and using the value **1** (without the `n`), would yield the **second** page.
+For example, if your page-numbering is set to start at **1**, then using the value **n1** would yield the **first** page, and using the value **1** (without the `n`), would yield the **second** page (because the index of the first page is zero).
 
 Finally, note that the auto-rewriting feature will deliberately ignore any anchor-links which are adorned with a `{% page_link %}` tag.
 
