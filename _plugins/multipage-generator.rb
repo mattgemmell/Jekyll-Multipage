@@ -476,6 +476,7 @@ module Jekyll
 				multipage_data["collation_enabled"] = collation_enabled
 				multipage_data["collate_at_root"] = collate_at_root
 				multipage_data["collated_path"] = collated_path
+				multipage_data["collated_title"] = collation_enabled ? expanded_page_titles.last : ""
 				multipage_data["is_collated_page"] = is_collated_page
 				multipage_data["first_path"] = page_paths[first_index]
 				multipage_data["last_path"] = page_paths[last_index]
