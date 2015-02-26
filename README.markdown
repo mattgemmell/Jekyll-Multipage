@@ -216,7 +216,9 @@ To see all the data that's available, enable the multipage feature for a post, a
 
 Some things to be aware of:
 
-1. On index pages of your site, Jekyll displays an excerpt from your post (usually up to the `<!--more-->` marker). Be aware that, with multipage posts, Jekyll generates the excerpt _before_ the post is split into multiple pages. If you need to override the default excerpt, you can use the `excerpt` YAML front-matter setting in your post, as usual.
+1. On index pages of your site, Jekyll displays an excerpt from your post (usually up to the `<!--more-->` marker). Be aware that, with multipage posts, Jekyll generates the excerpt _before_ the post is split into multiple pages. This won't be a problem if your `<!--more-->` marker is within the first page of your multipage content, which it presumably will be.  
+
+    If you do need to override the default excerpt, you can use the `excerpt` YAML front-matter setting in your post, as usual.
 
 2. Your site's RSS or Atom feed(s) will have always have the content of the _root_ page of a multipage post, regardless of whether that root page is the post's first page, or its collated page. If you need more customised behaviour, you can of course modify your feed template.  
 
