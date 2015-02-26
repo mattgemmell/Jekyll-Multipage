@@ -366,7 +366,21 @@ module Jekyll
 			# Create suitable multipages for each page of the post's content.
 			first_index = 0
 			last_index = (num_pages - 1)
+			
+			# Reconstruct collated page from the other split pages, joining on the pagebreak template.
+			pagebreak_include_tag = "\r\r{% include #{pagebreak_template} %}\r\r"
+			reassembled_collated_content = pages_before_link_rewriting.slice(0, num_pages).join(pagebreak_include_tag)
 
+			# Obtain basic rendered output of the collated page, for use in feeds etc.
+			rendered_collated_page = MultiPage.new(site, site.source, File.dirname(post_original_path), post_original_name)
+			rendered_collated_page.content = reassembled_collated_content
+			rendered_collated_page.data = {}.merge(post_original_data) # make copy of hash
+			rendered_collated_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, true, "", first_index, last_index, pages.count - 1, collated_path, out_of_bounds_index_value, out_of_bounds_index_value)
+
+			rendered_collated_page.render(site.layouts, site.site_payload)
+			collated_page_rendered_content = rendered_collated_page.content
+
+			# Process each page of content.
 			pages.each_with_index { |page_content, page_num|
 
 				# Create a page object at the correct path.
@@ -401,9 +415,7 @@ module Jekyll
 				if !is_collated_page
 					wrapped_page_content = page_content
 				else
-					# Reconstruct collated page from the other split pages, joining on the pagebreak template.
-					pagebreak_include_tag = "\r\r{% include #{pagebreak_template} %}\r\r"
-					wrapped_page_content = pages_before_link_rewriting.slice(0, num_pages).join(pagebreak_include_tag)
+					wrapped_page_content = reassembled_collated_content
 				end
 
 				# Ensure the page has suitable auto-wrapped paging template content.
@@ -467,55 +479,7 @@ module Jekyll
 				new_page.data["title"] = expanded_page_titles[page_num]
 
 				# Add some useful multipage-related data too.
-				multipage_data = {}
-				multipage_data["total_pages"] = num_pages
-				multipage_data["page_numbers"] = collation_enabled ? page_numbers.slice(0, num_pages) : page_numbers
-				multipage_data["page_paths"] = collation_enabled ? page_paths.slice(0, num_pages) : page_paths
-				multipage_data["page_titles"] = collation_enabled ? page_titles.slice(0, num_pages) : page_titles
-				multipage_data["expanded_page_titles"] = collation_enabled ? expanded_page_titles.slice(0, num_pages) : expanded_page_titles
-				multipage_data["collation_enabled"] = collation_enabled
-				multipage_data["collate_at_root"] = collate_at_root
-				multipage_data["collated_path"] = collated_path
-				multipage_data["collated_title"] = collation_enabled ? expanded_page_titles.last : ""
-				multipage_data["is_collated_page"] = is_collated_page
-				multipage_data["first_path"] = page_paths[first_index]
-				multipage_data["last_path"] = page_paths[last_index]
-				multipage_data["first_number"] = page_numbers[first_index]
-				multipage_data["last_number"] = page_numbers[last_index]
-				multipage_data["first_title"] = page_titles[first_index]
-				multipage_data["last_title"] = page_titles[last_index]
-				multipage_data["first_expanded_title"] = expanded_page_titles[first_index]
-				multipage_data["last_expanded_title"] = expanded_page_titles[last_index]
-				multipage_data["page_index"] = page_num
-				multipage_data["page_path"] = page_path
-				multipage_data["page_number"] = is_collated_page ? out_of_bounds_index_value : page_slug_number
-				multipage_data["page_title"] = page_titles[page_num]
-				multipage_data["expanded_page_title"] = expanded_page_titles[page_num]
-				if page_num > first_index && !is_collated_page
-					previous_index = page_num - 1
-					multipage_data["previous_path"] = page_paths[previous_index]
-					multipage_data["previous_number"] = page_numbers[previous_index]
-					multipage_data["previous_title"] = page_titles[previous_index]
-					multipage_data["previous_expanded_title"] = expanded_page_titles[previous_index]
-				else 
-					multipage_data["previous_path"] = ""
-					multipage_data["previous_number"] = out_of_bounds_index_value
-					multipage_data["previous_title"] = ""
-					multipage_data["previous_expanded_title"] = ""
-				end
-				if page_num < last_index && !is_collated_page
-					next_index = page_num + 1
-					multipage_data["next_path"] = page_paths[next_index]
-					multipage_data["next_number"] = page_numbers[next_index]
-					multipage_data["next_title"] = page_titles[next_index]
-					multipage_data["next_expanded_title"] = expanded_page_titles[next_index]
-				else 
-					multipage_data["next_path"] = ""
-					multipage_data["next_number"] = out_of_bounds_index_value
-					multipage_data["next_title"] = ""
-					multipage_data["next_expanded_title"] = ""
-				end
-				new_page.data["multipage"] = multipage_data
+				new_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, is_collated_page, collated_page_rendered_content, first_index, last_index, page_num, page_path, out_of_bounds_index_value, page_slug_number)
 
 				# Actualise all new, non-root pages.
 				if !page_path.eql?(post_original_url)
@@ -527,6 +491,79 @@ module Jekyll
 					site.pages << new_page
 				end
 			}
+		end
+
+		def make_multipage_data(
+			num_pages,
+			collation_enabled,
+			page_numbers,
+			page_paths,
+			page_titles,
+			expanded_page_titles,
+			collate_at_root,
+			collated_path,
+			is_collated_page,
+			collated_page_rendered_content,
+			first_index,
+			last_index,
+			page_num,
+			page_path,
+			out_of_bounds_index_value,
+			page_slug_number
+			)
+
+			multipage_data = {}
+			multipage_data["total_pages"] = num_pages
+			multipage_data["page_numbers"] = collation_enabled ? page_numbers.slice(0, num_pages) : page_numbers
+			multipage_data["page_paths"] = collation_enabled ? page_paths.slice(0, num_pages) : page_paths
+			multipage_data["page_titles"] = collation_enabled ? page_titles.slice(0, num_pages) : page_titles
+			multipage_data["expanded_page_titles"] = collation_enabled ? expanded_page_titles.slice(0, num_pages) : expanded_page_titles
+			multipage_data["collation_enabled"] = collation_enabled
+			multipage_data["collate_at_root"] = collate_at_root
+			multipage_data["collated_path"] = collated_path
+			multipage_data["collated_title"] = collation_enabled ? expanded_page_titles.last : ""
+			multipage_data["is_collated_page"] = is_collated_page
+			multipage_data["collated_page_rendered_content"] = collated_page_rendered_content
+			multipage_data["first_path"] = page_paths[first_index]
+			multipage_data["last_path"] = page_paths[last_index]
+			multipage_data["first_number"] = page_numbers[first_index]
+			multipage_data["last_number"] = page_numbers[last_index]
+			multipage_data["first_title"] = page_titles[first_index]
+			multipage_data["last_title"] = page_titles[last_index]
+			multipage_data["first_expanded_title"] = expanded_page_titles[first_index]
+			multipage_data["last_expanded_title"] = expanded_page_titles[last_index]
+			multipage_data["page_index"] = page_num
+			multipage_data["page_path"] = page_path
+			multipage_data["page_number"] = is_collated_page ? out_of_bounds_index_value : page_slug_number
+			multipage_data["page_title"] = page_titles[page_num]
+			multipage_data["expanded_page_title"] = expanded_page_titles[page_num]
+			if page_num > first_index && !is_collated_page
+				previous_index = page_num - 1
+				multipage_data["previous_path"] = page_paths[previous_index]
+				multipage_data["previous_number"] = page_numbers[previous_index]
+				multipage_data["previous_title"] = page_titles[previous_index]
+				multipage_data["previous_expanded_title"] = expanded_page_titles[previous_index]
+			else 
+				multipage_data["previous_path"] = ""
+				multipage_data["previous_number"] = out_of_bounds_index_value
+				multipage_data["previous_title"] = ""
+				multipage_data["previous_expanded_title"] = ""
+			end
+			if page_num < last_index && !is_collated_page
+				next_index = page_num + 1
+				multipage_data["next_path"] = page_paths[next_index]
+				multipage_data["next_number"] = page_numbers[next_index]
+				multipage_data["next_title"] = page_titles[next_index]
+				multipage_data["next_expanded_title"] = expanded_page_titles[next_index]
+			else 
+				multipage_data["next_path"] = ""
+				multipage_data["next_number"] = out_of_bounds_index_value
+				multipage_data["next_title"] = ""
+				multipage_data["next_expanded_title"] = ""
+			end
+
+			return multipage_data
+
 		end
 
 		def get_setting(setting, site, post_data, default)

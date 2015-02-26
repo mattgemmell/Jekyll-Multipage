@@ -90,6 +90,8 @@ When the collated page is assembled, the **page-break template** is inserted bet
 
 As with every setting, you can override this on a per-post basis, and also set a site-wide default.
 
+You'll probably also want to ensure that your site's RSS feed includes the _entire_ content of the post – i.e. the content of the collated page – rather than just the content of the _root_ page, which is the default behaviour. This is easily accomplished: see the [Things to note](#things-to-note) section for details.
+
 
 ## Page numbers
 
@@ -216,7 +218,17 @@ Some things to be aware of:
 
 1. On index pages of your site, Jekyll displays an excerpt from your post (usually up to the `<!--more-->` marker). Be aware that, with multipage posts, Jekyll generates the excerpt _before_ the post is split into multiple pages. If you need to override the default excerpt, you can use the `excerpt` YAML front-matter setting in your post, as usual.
 
-2. Your site's feed(s) will have always have the content of the _root_ page of a multipage post, whether that root page is the post's first page, or its collated page. If you need more customised behaviour, you can of course modify your feed template.
+2. Your site's RSS or Atom feed(s) will have always have the content of the _root_ page of a multipage post, regardless of whether that root page is the post's first page, or its collated page. If you need more customised behaviour, you can of course modify your feed template.  
+
+    Specifically, to ensure that the entire (collated) content of the post is in your feed, modify the feed's template file as follows. Your feed template file is usually called `atom.xml`, and it lives in your Jekyll site's root folder.  
+    
+        <description>
+        	{% if post.multipage %}
+        		{{ post.multipage.collated_page_rendered_content | xml_escape }}
+        	{% else %}
+        		{{ post.content | xml_escape }}
+        	{% endif %}
+        </description>
 
 
 ## Can you provide support for this code?
