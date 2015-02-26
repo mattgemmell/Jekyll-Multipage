@@ -5,7 +5,7 @@ by [Matt Gemmell](http://mattgemmell.com/)
 
 ## What is it?
 
-It's a Jekyll generator plugin that splits posts across multiple pages, with extensive configuration options.
+It's a Jekyll generator plugin that splits posts (or pages) across multiple sub-pages, with extensive configuration options.
 
 
 ## What are its requirements?
@@ -20,6 +20,8 @@ This plugin lets you designate posts as **multipage**, which means those posts w
 You commonly see such multipage articles on the web in tutorials, or lengthy reviews with multiple sections, or even with stories split into chapters. With this plugin, you can write the entire article in a single Markdown file, and let the plugin split it up for you.
 
 There are many configuration options available, to control how the plugin works.
+
+Note that whilst this document refers to posts, the plugin works for both posts _and_ pages.
 
 
 ## How do I use it?

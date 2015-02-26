@@ -62,11 +62,15 @@ module Jekyll
 
 		def create_multipage(post, site)
 			# Cache post's info in case we have to modify the original (if it's page 1, instead of the collated page).
-			post_original_title = post.title
+			post_original_title = post.respond_to?("title") ? post.title : post.data["title"]
 			post_original_data = {}.merge(post.data)
 			post_original_content = post.content
 			post_original_name = post.name
 			post_original_url = post.url
+			last_filename_posn = post_original_url.rindex("index.html")
+			if (last_filename_posn)
+				post_original_url = post_original_url.slice(0, last_filename_posn)
+			end
 			post_original_path = post.path
 
 			# Define tokens available for titles etc.
@@ -663,13 +667,15 @@ module Jekyll
 			multi_posts = site.posts.find_all { |post|
 				post.data[@multipage_frontmatter_key] == true
 			}
+			
+			# Find all pages that have the multipage front-matter.
+			multi_posts = multi_posts + site.pages.find_all { |post|
+				post.data[@multipage_frontmatter_key] == true
+			}
 
-			# Create multipages only for posts that actually require multiple pages.
+			# Create multipages.
 			multi_posts.each { |post|
-				if @pagebreak_regexp =~ post.content
-					# This post contains at least one pagebreak tag.
-					create_multipage(post, site)
-				end
+				create_multipage(post, site)
 			}
 		end
 
