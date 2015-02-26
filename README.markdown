@@ -222,7 +222,7 @@ Some things to be aware of:
 
     If you do need to override the default excerpt, you can use the `excerpt` YAML front-matter setting in your post, as usual.
 
-2. Your site's RSS or Atom feed(s) will have always have the content of the _root_ page of a multipage post, regardless of whether that root page is the post's first page, or its collated page. If you need more customised behaviour, you can of course modify your feed template.  
+2. Your site's RSS or Atom feed(s) will always have the content of the _root_ page of a multipage post, regardless of whether that root page is the post's first page, or its collated page. If you need more customised behaviour, you can of course modify your feed template.  
 
     Specifically, to ensure that the entire (collated) content of the post is in your feed, modify the feed's template file as follows. Your feed template file is usually called `atom.xml`, and it lives in your Jekyll site's root folder.  
     
