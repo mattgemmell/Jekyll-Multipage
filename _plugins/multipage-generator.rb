@@ -152,7 +152,7 @@ module Jekyll
 			# Abort if this post doesn't need multiple pages.
 			if num_pages < 2
 				# If there's only one page, we have nothing to do.
-				exit
+				return
 			end
 
 			# Handle the collated page.
