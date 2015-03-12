@@ -379,7 +379,7 @@ module Jekyll
 			rendered_collated_page = MultiPage.new(site, site.source, File.dirname(post_original_path), post_original_name)
 			rendered_collated_page.content = reassembled_collated_content
 			rendered_collated_page.data = {}.merge(post_original_data) # make copy of hash
-			rendered_collated_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, true, "", first_index, last_index, pages.count - 1, collated_path, out_of_bounds_index_value, out_of_bounds_index_value)
+			rendered_collated_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, true, "", first_index, last_index, pages.count - 1, collated_path, out_of_bounds_index_value, out_of_bounds_index_value, post_original_content)
 
 			rendered_collated_page.render(site.layouts, site.site_payload)
 			collated_page_rendered_content = rendered_collated_page.content
@@ -483,7 +483,7 @@ module Jekyll
 				new_page.data["title"] = expanded_page_titles[page_num]
 
 				# Add some useful multipage-related data too.
-				new_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, is_collated_page, collated_page_rendered_content, first_index, last_index, page_num, page_path, out_of_bounds_index_value, page_slug_number)
+				new_page.data["multipage"] = make_multipage_data(num_pages, collation_enabled, page_numbers, page_paths, page_titles, expanded_page_titles, collate_at_root, collated_path, is_collated_page, collated_page_rendered_content, first_index, last_index, page_num, page_path, out_of_bounds_index_value, page_slug_number, post_original_content)
 
 				# Actualise all new, non-root pages.
 				if !page_path.eql?(post_original_url)
@@ -513,7 +513,8 @@ module Jekyll
 			page_num,
 			page_path,
 			out_of_bounds_index_value,
-			page_slug_number
+			page_slug_number,
+			post_original_content
 			)
 
 			multipage_data = {}
@@ -527,6 +528,8 @@ module Jekyll
 			multipage_data["collated_path"] = collated_path
 			multipage_data["collated_title"] = collation_enabled ? expanded_page_titles.last : ""
 			multipage_data["is_collated_page"] = is_collated_page
+			multipage_data["post_word_count"] = post_original_content.split.length
+			multipage_data["post_original_content"] = post_original_content
 			multipage_data["collated_page_rendered_content"] = collated_page_rendered_content
 			multipage_data["first_path"] = page_paths[first_index]
 			multipage_data["last_path"] = page_paths[last_index]
